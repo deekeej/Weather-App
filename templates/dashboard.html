@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Latest Measurement Display -->
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">Latest Measurement</h5>
+    <p class="card-text">
+      Timestamp: {{ latest_measurement.timestamp }}<br>
+      Temperature: {{ latest_measurement.temp }}°C
+    </p>
+  </div>
+</div>
+
+<!-- Input for Number of Latest Records to Show -->
+<div class="mb-3">
+  <form id="numRecordsForm">
+    <div class="form-group">
+      <label for="numRecords">Enter Number of Latest Records to Show:</label>
+      <input type="number" class="form-control" id="numRecords" name="numRecords" min="1" value="{{ num_last_measurements }}">
+      <button type="submit" class="btn btn-primary mt-2">Update</button>
+    </div>
+  </form>
+</div>
+
+<!-- Table of Last X Measurements with Deletion Icon -->
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Timestamp</th>
+        <th scope="col">Temperature (°C)</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for measurement in last_measurements %}
+      <tr>
+        <td>{{ measurement.timestamp }}</td>
+        <td>{{ measurement.temp }}</td>
+        <td><a href="#" class="delete-record" data-timestamp="{{ measurement.timestamp }}">X</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Placeholder for Chart -->
+<div id="temperatureChart" class="mt-4">
+  <!-- The chart will be injected here by a JavaScript charting library like Chart.js -->
+  <canvas></canvas>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tableBody = document.querySelector('table tbody');
+    tableBody.addEventListener('click', function(event) {
+      if (event.target.classList.contains('delete-record')) {
+        event.preventDefault();
+        event.target.closest('tr').remove();
+      }
+    });
+  
+    const form = document.getElementById('numRecordsForm');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const numRecords = document.getElementById('numRecords').value;
+      window.location.href = '/' + numRecords; // Navigate to the URL with the new number
+    });
+  });
+</script>
+{% endblock %}
+
+  

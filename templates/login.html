@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <title>Login - Temperature Tracker</title>
+</head>
+<body>
+  <div class="container h-100">
+    <div class="row justify-content-center align-items-center" style="height:100vh;">
+      <div class="col-4">
+        <div class="card">
+          <article class="card-body">
+            <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
+            <hr>
+            <form method="POST" action="{{ url_for('login') }}">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+              </div>
+            </form>
+          </article>
+        </div>
+        <p class="text-center mt-4">Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
