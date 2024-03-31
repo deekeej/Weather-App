@@ -16,7 +16,7 @@
           <article class="card-body">
             <h4 class="card-title text-center mb-4 mt-1">Register</h4>
             <hr>
-            <form method="POST" action="{{ url_for('register') }}">
+            <form method="POST" action="{{ url_for('auth.register') }}">
               <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -39,7 +39,7 @@
             </form>
           </article>
         </div>
-        <p class="text-center mt-4">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        <p class="text-center mt-4">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
       </div>
     </div>
   </div>
