@@ -43,11 +43,12 @@
   <form id="addMeasurementForm">
     <div class="form-group">
       <label for="newTemp">New Temperature (°C):</label>
-      <input type="number" class="form-control" id="newTemp">
+      <input type="number" step="0.1" class="form-control" id="newTemp" placeholder="Enter temperature (e.g., 1.5)">
       <button type="submit" class="btn btn-primary mt-2">Add Measurement</button>
     </div>
   </form>
 </div>
+
 
 <!-- Rest of your existing content -->
 
@@ -62,41 +63,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Function to update the latest measurement display
     function updateLatestMeasurement() {
-    fetch('/api/measurements/latest')
-        .then(response => response.json())
-        .then(data => {
-            const measurementDiv = document.getElementById('latest-measurement');
-            if (data) {
-                measurementDiv.innerHTML = `
-                    Timestamp: ${data.timestamp}<br>
-                    Temperature: ${data.temp}°C
-                `;
-            } else {
-                measurementDiv.innerHTML = 'No measurements available.';
-            }
-        });
-}
-
-     // Function to add a new measurement
-     const addForm = document.getElementById('addMeasurementForm');
-    addForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const newTemp = document.getElementById('newTemp').value;
-
-        fetch('/api/measurements', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ temp: newTemp })
-        })
-        .then(response => {
-            if (response.ok) {
-                updateLatestMeasurement(); // Update the latest measurement display
-                updateMeasurementsTable(document.getElementById('numRecords').value || 5); // Update the measurements table
-                document.getElementById('newTemp').value = ''; // Reset input field
-            }
-        });
-    });
-
+        fetch('/api/measurements/latest')
+            .then(response => response.json())
+            .then(data => {
+                const measurementDiv = document.getElementById('latest-measurement');
+                if (data.message) {
+                    measurementDiv.innerHTML = 'No measurements available';
+                } else {
+                    measurementDiv.innerHTML = `
+                        Timestamp: ${data.timestamp}<br>
+                        Temperature: ${data.temperature}°C
+                    `;
+                }
+            });
+    }
 
     // Function to update the table with the last X measurements
     function updateMeasurementsTable(numRecords) {
@@ -107,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 tableBody.innerHTML = data.map(measurement => `
                     <tr>
                         <td>${measurement.timestamp}</td>
-                        <td>${measurement.temp}</td>
-                        <td><button class="btn btn-danger delete-record" data-timestamp="${measurement.timestamp}">X</button></td>
+                        <td>${measurement.temperature}</td>
+                        <td><button class="btn btn-danger delete-record" data-id="${measurement.id}">X</button></td>
                     </tr>
                 `).join('');
             });
@@ -116,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and display the latest measurement when the page loads
     updateLatestMeasurement();
+    updateMeasurementsTable(5);  // Initialize with the latest 5 measurements
 
     // Event listener for the form to update the table
     const form = document.getElementById('numRecordsForm');
@@ -125,19 +106,41 @@ document.addEventListener('DOMContentLoaded', function() {
         updateMeasurementsTable(numRecords);
     });
 
+    // Event listener for the form to add a new measurement
+    const addForm = document.getElementById('addMeasurementForm');
+    addForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const temp = document.getElementById('newTemp').value;
+        fetch('/api/measurements', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "temp": parseFloat(temp) })
+        }).then(response => {
+            if (response.ok) {
+                updateLatestMeasurement();
+                updateMeasurementsTable(document.getElementById('numRecords').value || 5);
+            }
+        });
+    });
+
     // Event delegation for deleting measurements
     const tableBody = document.querySelector('#measurements-table tbody');
     tableBody.addEventListener('click', function(event) {
         if (event.target.classList.contains('delete-record')) {
             event.preventDefault();
-            const timestamp = event.target.getAttribute('data-timestamp');
-            fetch(`/api/measurements/delete/${timestamp}`, { method: 'DELETE' })
+            const id = event.target.getAttribute('data-id');
+            fetch(`/api/measurements/delete/${id}`, { method: 'DELETE' })
                 .then(response => {
                     if (response.ok) {
                         updateMeasurementsTable(document.getElementById('numRecords').value || 5);
                         updateLatestMeasurement();
+                    } else {
+                        console.error(`Failed to delete measurement with id ${id}`);
                     }
-                });
+                })
+                .catch(error => console.error('Error during delete:', error));
         }
     });
 });

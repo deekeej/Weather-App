@@ -1,9 +1,19 @@
-def login_user(username, password):
-    # Here you would implement the logic to check the username and password
-    # For now, we will just return True to simulate a successful login
-    return True
+import hashlib
+from database.database import db, User
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def login_user(login, password):
+    user = User.query.filter((User.username == login) | (User.email == login)).first()
+    if user and user.password_hash == hash_password(password):
+        return True
+    return False
 
 def register_user(username, email, password):
-    # Here you would implement the logic to save the user's credentials
-    # For now, we will just return True to simulate a successful registration
+    if User.query.filter((User.username == username) | (User.email == email)).first():
+        return False  # User already exists
+    new_user = User(username=username, email=email, password_hash=hash_password(password))
+    db.session.add(new_user)
+    db.session.commit()
     return True
