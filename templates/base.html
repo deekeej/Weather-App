@@ -1,29 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-        <div class="navbar-collapse justify-content-between">
-            <!-- This is for the centered title -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
             <div class="navbar-center mx-auto">
                 <a class="navbar-brand" href="{{ url_for('site.dashboard') }}">Temperature Tracker</a>
             </div>
-
-            <!-- This is for the username and logout button on the right -->
             <div class="form-inline">
-                <span class="navbar-text">{{ username }}</span>
+                {% if username %}
+                <span class="navbar-text mr-3">{{ username }}</span>
                 <button class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('auth.logout') }}';">Logout</button>
+                {% endif %}
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container">
-    {% block content %}{% endblock %}
-</div>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>

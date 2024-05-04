@@ -1,5 +1,5 @@
 # site_routes.py
-from flask import Blueprint, render_template, session,redirect, url_for
+from flask import Blueprint, render_template, session
 from services.measurement_service import (
     get_last_measurement,
     get_last_x_measurements,
@@ -16,11 +16,13 @@ def dashboard():
     latest_measurement = get_last_measurement()
     last_measurements = get_last_x_measurements(5)  # For example, get the last 5
     num_last_measurements = len(last_measurements)
+    username = session.get("username", "Unknown User")
 
     return render_template(
         'dashboard.html',
         latest_measurement=latest_measurement,
         last_measurements=last_measurements,
         num_last_measurements=num_last_measurements,
+        username=username
     )
 

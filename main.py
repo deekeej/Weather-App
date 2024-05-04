@@ -5,6 +5,7 @@ from controllers.api_routes_user import auth_blueprint
 from controllers.api_routes_measurement import measurement_blueprint
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'supersecretkey'  # Set your secret key here
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///weather_app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)

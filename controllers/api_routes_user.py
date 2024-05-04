@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, url_for, render_template
+from flask import Blueprint, request, redirect, url_for, render_template,session
 from services.user_service import login_user, register_user
 
 auth_blueprint = Blueprint('auth', __name__)
@@ -34,4 +34,5 @@ def register():
 
 @auth_blueprint.route('/logout')
 def logout():
+    session.clear()  # Clear the session
     return redirect(url_for('site.index'))
